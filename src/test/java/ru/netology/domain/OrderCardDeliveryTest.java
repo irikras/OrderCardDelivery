@@ -9,6 +9,7 @@ import java.time.Duration;
 import static com.codeborne.selenide.Condition.exactText;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.byText;
+import static com.codeborne.selenide.Selectors.withText;
 import static com.codeborne.selenide.Selenide.*;
 
 public class OrderCardDeliveryTest {
@@ -25,15 +26,23 @@ public class OrderCardDeliveryTest {
 
         $("[data-test-id=city] input").setValue(registrationByCardInfo.getCity());
         $("[data-test-id=date] input").doubleClick().sendKeys(Keys.BACK_SPACE);
-        $("[data-test-id=date] input").setValue(DataGenerator.Registration.getDate(7));
+        String plannedDate = DataGenerator.Registration.getDate(10);
+        $("[data-test-id=date] input").setValue(plannedDate);
         $("[data-test-id=name] input").setValue(registrationByCardInfo.getName());
         $("[data-test-id=phone] input").setValue(registrationByCardInfo.getPhoneNumber());
         $("[data-test-id=agreement]").click();
         $(byText("Запланировать")).click();
+        $("[data-test-id=success-notification] .notification__content")
+                .shouldBe(visible, Duration.ofSeconds(15))
+                .shouldHave(exactText("Встреча успешно запланирована на " + plannedDate));
         $("[data-test-id=date] input").doubleClick().sendKeys(Keys.BACK_SPACE);
-        $("[data-test-id=date] input").sendKeys(DataGenerator.Registration.getRescheduledDate(10));
+        String replanDate = DataGenerator.Registration.getDate(12);
+        $("[data-test-id=date] input").setValue(replanDate);
         $(byText("Запланировать")).click();
+        $(withText("У вас уже запланирована встреча на другую дату. Перепланировать?")).shouldBe(visible);
         $(byText("Перепланировать")).click();
-        $("[data-test-id=success-notification]").shouldBe(visible, Duration.ofSeconds(15));
+        $("[data-test-id=success-notification] .notification__content")
+                .shouldBe(visible, Duration.ofSeconds(15))
+                .shouldHave(exactText("Встреча успешно запланирована на " + replanDate));
     }
 }

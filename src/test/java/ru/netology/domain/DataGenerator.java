@@ -25,10 +25,6 @@ public class DataGenerator {
         public static String getDate(int plusDays) {
             return LocalDate.now().plusDays(plusDays).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
         }
-
-        public static String getRescheduledDate(int plusDays) {
-            return LocalDate.now().plusDays(plusDays).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-        }
     }
 }
 
